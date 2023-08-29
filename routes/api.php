@@ -84,6 +84,11 @@ Route::post("store_kyc","usersController@user_kyc");
 Route::post("swap","usersController@swap");
 Route::post("swap_payout","usersController@swap_payout");
 
+Route::post("buy","usersController@buy");
+Route::post("sell","usersController@sell");
+
+Route::post("notifications","usersController@notifications");
+
 
 
 

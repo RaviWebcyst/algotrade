@@ -39,9 +39,26 @@ import payments from './components/pages/payments.vue';
 import thankyou from './components/pages/thankyou.vue';
 import market from './components/pages/market.vue';
 import trade from './components/pages/trade.vue';
+import notifications from './components/pages/notifications.vue';
 
 Vue.use(Router);
 const routes = [
+    {
+        path: '/notifications',
+        component : notifications,
+        name: 'notifications',
+        meta: {
+            requiresAuth : true
+        },
+        beforeEnter: (to, from, next) => {
+            if( window.innerWidth < 600){
+            document.body.classList.add('sidebar-closed','sidebar-collapse');
+            document.body.classList.remove('sidebar-open');
+            next();
+            }
+            next();
+          }
+    },
     {
         path: '/trade/:id',
         component : trade,

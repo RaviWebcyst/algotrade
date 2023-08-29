@@ -145,6 +145,9 @@ Route::get('market', function () {
 Route::get('trade/{id}', function () {
     return view('welcome');
 });
+Route::get('notifications', function () {
+    return view('welcome');
+});
 
 
 Route::get("/admin/login",'usersController@admin_login')->name('admin.login');
@@ -176,6 +179,7 @@ Route::middleware(['auth','is_admin'])->prefix('admin')->group(function(){
     Route::get("direct_incomes",'usersController@direct_income')->name("admin.direct_incomes");
     Route::get("level_incomes",'usersController@level_income')->name("admin.level_incomes");
     Route::get("daily_incomes",'usersController@daily_income')->name("admin.daily_incomes");
+    Route::get("compound_incomes",'usersController@compound_incomes')->name("admin.compound_incomes");
     Route::get("transactions",'usersController@all_transactions')->name("admin.transactions");
     
     //user payments
@@ -218,6 +222,21 @@ Route::middleware(['auth','is_admin'])->prefix('admin')->group(function(){
     Route::post("changeStatus/{id}",'usersController@changeStatus')->name("admin.status");
     Route::get("chat/{id}",'usersController@admin_chat')->name("admin.chat");
     Route::post("sendMessage/{id}",'usersController@sendMessage')->name("admin.sendMessage");
+
+
+    Route::get("assets",'usersController@assets')->name("admin.assets");
+    Route::get("add_asset",'usersController@add_asset')->name("admin.add_asset");
+    Route::post("store_asset",'usersController@store_asset')->name("admin.store_asset");
+    Route::get("edit_asset/{id}",'usersController@edit_asset')->name("admin.edit_asset");
+    Route::post("update_asset/{id}",'usersController@update_asset')->name("admin.update_asset");
+    Route::get("delete_asset/{id}",'usersController@delete_asset')->name("admin.delete_asset");
+
+    Route::get("trade_setting",'usersController@trade_setting')->name("admin.trade_setting");
+    Route::get("add_trade_setting",'usersController@add_trade_setting')->name("admin.add_trade_setting");
+    Route::post("store_trade_setting",'usersController@store_trade_setting')->name("admin.store_trade_setting");
+    Route::get("edit_trade_setting/{id}",'usersController@edit_trade_setting')->name("admin.edit_trade_setting");
+    Route::post("update_trade_setting/{id}",'usersController@update_trade_setting')->name("admin.update_trade_setting");
+    Route::get("delete_trade_setting/{id}",'usersController@delete_trade_setting')->name("admin.delete_trade_setting");
 
 
 });

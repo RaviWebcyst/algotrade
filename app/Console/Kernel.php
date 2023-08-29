@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         \App\Console\Commands\compound_income::class,
-        \App\Console\Commands\dailyRoi::class,
+        // \App\Console\Commands\dailyRoi::class,
 
     ];
 
@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command("compound:income")->everyMinute();
-        $schedule->command("daily:roi")->everyMinute();
+        // $schedule->command("daily:roi")->everyMinute();
     }
 
     /**

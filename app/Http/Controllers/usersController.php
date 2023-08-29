@@ -6,14 +6,17 @@ use Illuminate\Http\Request;
 use App\User;
 use App\wallet;
 use App\post;
+use App\daily_asset;
 use App\price;
 use App\support;
 use App\chat;
 use App\callback;
+use App\trade_setting;
 use App\top_coin;
 use App\payment;
 use App\level_income;
 use App\downline;
+use App\trade;
 use App\upi;
 use App\kyc;
 use App\withdraw;
@@ -154,6 +157,15 @@ class usersController extends Controller
         });
         return view('admin.daily_incomes',compact('records'));
     }
+    public function compound_incomes(){
+        $records = wallet::where("transaction_type","compound_income")->orderBy("id","desc")->paginate(50);
+        $records->map(function($data){
+            $user= User::where("id",$data->userId)->first();
+            $data->uid = $user->uid;
+            return $data;
+        });
+        return view('admin.compound_incomes',compact('records'));
+    }
     public function all_transactions(){
         $records = wallet::orderBy("id","desc")->paginate(50);
         $records->map(function($data){
@@ -162,6 +174,62 @@ class usersController extends Controller
             return $data;
         });
         return view('admin.transactions',compact('records'));
+    }
+
+   
+    public function assets(){
+        $assets = daily_asset::orderBy("id",'desc')->paginate(50);
+        return view('admin.assets.index',compact('assets'));
+    }
+    public function add_asset(){
+        return view('admin.assets.add');
+    }
+    public function store_asset(Request $request){
+        $request->validate([
+            'symbol' => 'required',
+            'open_time' => 'required',
+            'close_time' => 'required',
+        ]);
+
+        $asset = new daily_asset();
+        $asset->symbol = $request->symbol;
+        $asset->open_time = $request->open_time;
+        $asset->close_time = $request->close_time;
+        $asset->save();
+
+        daily_asset::where("id","!=",$asset->id)->update([
+            "expire"=>1
+        ]);
+        
+
+        return redirect()->route('admin.assets')->with('success',"Asset Add successfully");
+
+    }
+    public function edit_asset($id){
+        $asset = daily_asset::findOrFail($id);
+        return view('admin.assets.edit',compact('asset'));
+    }
+    public function update_asset(Request $request ,$id){
+        $request->validate([
+            'symbol' => 'required',
+            'open_time' => 'required',
+            'close_time' => 'required',
+        ]);
+
+        $asset =  daily_asset::findOrFail($id);
+        $asset->symbol = $request->symbol;
+        $asset->open_time = $request->open_time;
+        $asset->close_time = $request->close_time;
+        $asset->save();
+        
+
+        return redirect()->route('admin.assets')->with('success',"Asset Update successfully");
+    }
+
+    public function delete_asset($id){
+        $asset = daily_asset::findOrFail($id);
+        $asset->delete();
+        return redirect()->back()->with('success',"Asset Deleted Successfully");
     }
 
 
@@ -279,6 +347,11 @@ public function recentChat(Request $request){
             return response()->json(['token_absent']);
         }
         $balance = $this->getBalance($user->id,"usdt");
+        $trade_balance = $this->getBalance($user->id,"trade");
+
+        $usdt = pack_active::where("expire",0)->where("user_id",$user->id)->sum('amount');
+
+
         // $balance = round($total_balance - $user->package_amount,2);
        
         $profit_balance = $this->getBalance($user->id,"usd");
@@ -303,11 +376,13 @@ public function recentChat(Request $request){
         
         $direct_business = User::where('spid',$user->uid)->sum('total_business');
         $team_business = downline::where("tagsp",$user->uid)->sum('business');
+
+        $notifies = daily_asset::where("expire",0)->count();
        
 
         $kyc = kyc::where("user_id",$user->id)->select("status",'user_id')->latest()->first();
 
-        return response()->json(compact('user','balance','interest','commission','profit_balance','total_refers','active_refers','total_team','total_invests','direct_income',"level_income",'kyc','payout','direct_business','team_business','compound_income'));
+        return response()->json(compact('user','balance','interest','commission','profit_balance','total_refers','active_refers','total_team','total_invests','direct_income',"level_income",'kyc','payout','direct_business','team_business','compound_income','trade_balance','usdt','notifies'));
     }
 
 
@@ -1559,6 +1634,61 @@ public function recentChat(Request $request){
     }
 
 
+    public function trade_setting(){
+        $settings = trade_setting::orderBy("id","desc")->paginate(50);
+        return view('admin.trade_setting.index',compact('settings'));
+    }
+    public function add_trade_setting(){
+        return view('admin.trade_setting.add');
+    }
+
+    public function store_trade_setting(Request $request){
+        $request->validate([
+            "symbol"=>'required',
+            "profit"=>"required",
+            "amount"=>"required",
+        ]);
+
+        $symbol = strtolower($request->symbol)."usdt";
+
+        $sett = new trade_setting();
+        $sett->symbol = $symbol;
+        $sett->profit = $request->profit;
+        $sett->amount = $request->amount;
+        $sett->save();
+
+        return redirect()->route('admin.trade_setting')->with("success","Setting Add Successfully");
+
+    }
+    public function edit_trade_setting($id){
+        $setting = trade_setting::findOrFail($id);
+        return view('admin.trade_setting.edit',compact('setting'));
+    }
+
+    public function update_trade_setting(Request $request,$id){
+        $request->validate([
+            "symbol"=>'required',
+            "profit"=>"required",
+            "amount"=>"required",
+        ]);
+        $symbol = strtolower($request->symbol)."usdt";
+
+        $sett = trade_setting::findOrFail($id);
+        $sett->symbol = $symbol;
+        $sett->profit = $request->profit;
+        $sett->amount = $request->amount;
+        $sett->save();
+
+        return redirect()->route('admin.trade_setting')->with("success","Setting Update Successfully");
+
+    }
+    public function delete_trade_setting($id){
+        $sett = trade_setting::findOrFail($id);
+        $sett->delete();
+        return redirect()->back()->with("success","Setting Delete Successfully");
+    }
+
+
 
 
     public function income_history(Request $request){
@@ -1603,7 +1733,7 @@ public function recentChat(Request $request){
     //    dd($rates);
     }
 
-    public function binance_api(){
+        public function binance_api(){
         //    return new \Binance\API('N05CyqGlTlTrsdQ1Tfxb7eYw2B9FuFVJ4lgmHFhRfbiOUzVLOugNqxAOri2HHHtw','Ty8QBWjggZXyWWhU95hFdhBsUkPZurefs54lyW2oN1L15Cb3LKhlZUYi5cbNIG01',true);
            return new \Binance\API('3OBD1scSD7YspxFQgjXrWfjM9gQ09eVKJqo0eddMA0DfQJNkxzKtZfrACPZhDlbl','lslNptpwsMfg6gDopP4X4pmO4kQtJjh7vXmojY6Df2HDFYpKUqAbQ9TUE51C4iWS');
         }
@@ -1679,6 +1809,9 @@ public function recentChat(Request $request){
             return response()->json(compact('posts'));
         }
 
+
+        
+
         public function crypto_price(){
             $api = $this->binance_api();
             $btc_price = $api->price("BTCUSDT");
@@ -1730,9 +1863,9 @@ public function recentChat(Request $request){
                 "price_currency": "USD",
                 "order_id": "'.$user->uid.'",
                 "order_description": "TheVinchi",
-                "ipn_callback_url": "https://www.thevinchi.io/panel/api/success_url",
-                "success_url": "https://www.thevinchi.io/panel/home",
-                "cancel_url": "https://www.thevinchi.io/panel/home"
+                "ipn_callback_url": "https://websyst.in/demo/algotrade/api/success_url",
+                "success_url": "https://websyst.in/demo/algotrade/home",
+                "cancel_url": "https://websyst.in/demo/algotrade/home"
                 } ',
                 CURLOPT_HTTPHEADER => array(
                     "x-api-key: ZPDQK5X-CXF48HV-MYR2J40-WPHFKVN",
@@ -1867,5 +2000,212 @@ public function recentChat(Request $request){
     
             }
         }
+    }
+
+    public function buy(Request $request){
+        
+        $validator = Validator::make($request->all(), [
+            'amount' => 'required',
+            'token'=>'required',
+            'price'=>'required',
+            'symbol'=>'required',
+        ]);
+
+        
+
+        if($validator->fails()){
+            return response()->json(['message'=>$validator->messages()],500);
+            exit;
+        }
+
+
+
+        $user = JWTAuth::parseToken()->authenticate();
+
+        $time = date('H:i');
+
+        $trade_time = daily_asset::where("open_time","<=",$time)->where("close_time",">=",$time)->where("expire",0)->first();
+
+        if($trade_time == null){
+            return response()->json(['message'=>"Invalid trade time slot"],500);
+            exit;
+        }
+
+        if($trade_time != null && $trade_time->symbol != $request->symbol){
+            return response()->json(['message'=>"Please choose valid trade symbol"],500);
+            exit;
+        }
+
+        $usdt = pack_active::where("expire",0)->where("user_id",$user->id)->sum('amount');
+
+        if($request->amount == 0){
+            return response()->json(["message"=>"Amount should be greater than zero"],500);
+            exit;
+        }
+
+        if($usdt < $request->amount){
+            return response()->json(["message"=>"Not enough Balance"],500);
+            exit;
+        }
+
+        $trade = trade_setting::where("symbol", $request->symbol)->first();
+        if($trade == null){
+            return response()->json(["message"=>"Trade is disabled for this symbol"],500);
+            exit;
+        }
+
+
+
+        $recieve  = $request->amount / $request->price;
+
+        $trade = new trade();
+        $trade->symbol = $request->symbol;
+        $trade->price = $request->price;
+        $trade->quantity = $request->amount;
+        $trade->recieve = $recieve;
+        $trade->user_id = $user->id;
+        $trade->type = "buy";
+        $trade->save();
+
+        $wallet = new wallet();
+        $wallet->user_id = $user->uid;
+        $wallet->userId = $user->id;
+        $wallet->amount = $request->amount;
+        $wallet->from ="buy";
+        $wallet->transaction_type = "buy";
+        $wallet->wallet_type = "usdt";
+        $wallet->type="debit";
+        $wallet->trade_id= $trade->id;
+        $wallet->description = "Buy $request->amount $request->coin from USDT";
+        $wallet->save();
+
+        // $wallet = new wallet();
+        // $wallet->user_id = $user->uid;
+        // $wallet->userId = $user->id;
+        // $wallet->amount = $recieve;
+        // $wallet->from ="buy";
+        // $wallet->transaction_type = "buy";
+        // $wallet->wallet_type = "trade";
+        // $wallet->type="credit";
+        // $wallet->trade_id= $trade->id;
+        // $wallet->description = "Buy $request->amount $request->coin from USDT";
+        // $wallet->save();
+
+        // $amount = 0.05 * $request->amount;
+
+        // $wallet = new wallet();
+        // $wallet->user_id= $user->uid;
+        // $wallet->userId= $user->id;
+        // $wallet->wallet_type= "compound";
+        // $wallet->from= "buy";
+        // $wallet->transaction_type= "compound_income";
+        // $wallet->type= "credit";
+        // $wallet->description= "compound income on buy amount $request->amount";
+        // $wallet->amount= $amount;
+        // $wallet->save();
+        
+        return response()->json(["message"=>"Buy Successfully"]);
+
+
+    }
+    // public function sell(Request $request){
+    //     $validator = Validator::make($request->all(), [
+    //         'amount' => 'required',
+    //         'token'=>'required',
+    //         'price'=>'required',
+    //         'symbol'=>'required',
+    //     ]);
+
+    //     if($validator->fails()){
+    //         return response()->json(['message'=>$validator->messages()],500);
+    //         exit;
+    //     }
+
+    //     $user = JWTAuth::parseToken()->authenticate();
+
+    //     $time = date('H:i');
+
+    //     $trade_time = daily_asset::where("open_time","<=",$time)->where("close_time",">=",$time)->where("expire",0)->first();
+
+    //     if($trade_time == null){
+    //         return response()->json(['message'=>"Invalid trade time slot"],500);
+    //         exit;
+    //     }
+
+    //     if($trade_time != null && $trade_time->symbol != $request->symbol){
+    //         return response()->json(['message'=>"Please choose valid trade symbol"],500);
+    //         exit;
+    //     }
+
+
+    //     $balance = $this->getBalance($user->id,"trade");
+
+    //     if($request->amount == 0){
+    //         return response()->json(["message"=>"Amount should be greater than zero"],500);
+    //         exit;
+    //     }
+
+
+    //     if($balance < $request->amount){
+    //         return response()->json(["message"=>"Not enough Balance"],500);
+    //         exit;
+    //     }
+
+    //     $recieve  = $request->amount * $request->price;
+
+    //     $trade = new trade();
+    //     $trade->symbol = $request->symbol;
+    //     $trade->price = $request->price;
+    //     $trade->quantity = $request->amount;
+    //     $trade->recieve = $recieve;
+    //     $trade->type = "sell";
+    //     $trade->save();
+
+    //     $wallet = new wallet();
+    //     $wallet->user_id = $user->uid;
+    //     $wallet->userId = $user->id;
+    //     $wallet->amount = $request->amount;
+    //     $wallet->from ="sell";
+    //     $wallet->transaction_type = "sell";
+    //     $wallet->wallet_type = "trade";
+    //     $wallet->type="debit";
+    //     $wallet->trade_id= $trade->id;
+    //     $wallet->description = "Sell $request->amount USDT from $request->coin";
+    //     $wallet->save();
+
+    //     $wallet = new wallet();
+    //     $wallet->user_id = $user->uid;
+    //     $wallet->userId = $user->id;
+    //     $wallet->amount = $recieve;
+    //     $wallet->from ="sell";
+    //     $wallet->transaction_type = "sell";
+    //     $wallet->wallet_type = "usdt";
+    //     $wallet->type="credit";
+    //     $wallet->trade_id= $trade->id;
+    //     $wallet->description = "Sell $request->amount $request->coin from USDT";
+    //     $wallet->save();
+
+
+    //     $amount = 0.05 * $request->amount;
+
+    //     $wallet = new wallet();
+    //     $wallet->user_id= $user->uid;
+    //     $wallet->userId= $user->id;
+    //     $wallet->wallet_type= "compound";
+    //     $wallet->from= "sell";
+    //     $wallet->transaction_type= "compound_income";
+    //     $wallet->type= "credit";
+    //     $wallet->description= "compound income on sell amount $request->amount";
+    //     $wallet->amount= $amount;
+    //     $wallet->save();
+
+        
+    //     return response()->json(["message"=>"Sold Successfully"],200);
+    // }
+
+
+    public function notifications(){
+        $history = daily_asset::where("expire",0)->orderBy("id","desc")->paginate(50);
+        return response()->json(compact('history'));
     }
 }

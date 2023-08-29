@@ -6,6 +6,8 @@ use Illuminate\Console\Command;
 use App\wallet;
 use App\User;
 use App\pack_active;
+use App\trade;
+use App\trade_setting;
 use App\package;
 use Carbon\Carbon;
 
@@ -42,29 +44,45 @@ class compound_income extends Command
      */
     public function handle()
     {
-        $packs = pack_active::where("expire",0)->orderBy("id","asc")->get();
-        foreach($packs as $pack){
-            $user = User::where("id",$pack->user_id)->first();
+        // $packs = pack_active::where("expire",0)->orderBy("id","asc")->get();
+        $trades = trade::where("type","buy")->get();
+        foreach($trades as $trade){
+            $user = User::where("id",$trade->user_id)->first();
            
-            //check income recieved to user
-            $check_income = wallet::where("userId",$pack->user_id)->where("from",$pack->package_id)->where("transaction_type","compound_income")->whereDate("created_at",Carbon::today())->count();
+            // check income recieved to user
+            $check_income = wallet::where("userId",$trade->user_id)->where("from",$trade->id)->where("transaction_type","compound_income")->whereDate("created_at",Carbon::today())->count();
             if($check_income > 0 ){
                 continue;
             }
+
+            $sett = trade_setting::where("symbol",$trade->symbol)->first();
+
+
+
+            if($sett == null){
+                continue;
+            }
            
-                $credit = wallet::where("userId",$user->id)->where("wallet_type","epin")->where("type","credit")->sum('amount');
-                $debit = wallet::where("userId",$user->id)->where("wallet_type","epin")->where("type","debit")->sum('amount');
+                $per = ($sett->profit/100);
+            
+            
+           
+                $credit = wallet::where("userId",$user->id)->where("wallet_type","compound")->where("type","credit")->sum('amount');
+                $debit = wallet::where("userId",$user->id)->where("wallet_type","compound")->where("type","debit")->sum('amount');
                 $compound = $credit - $debit;
 
-                $amount = 0.05 * ($compound+$pack->amount);
+                
+                $profit = $compound+$trade->quantity;
+
+                $amount = $per * $profit;
                 $wallet = new wallet();
                 $wallet->user_id= $user->uid;
                 $wallet->userId= $user->id;
                 $wallet->wallet_type= "compound";
-                $wallet->from= $pack->package_id;
+                $wallet->from= $trade->id;
                 $wallet->transaction_type= "compound_income";
                 $wallet->type= "credit";
-                $wallet->description= "compound income on profit $compound";
+                $wallet->description= "compound income on profit amount $profit";
                 $wallet->amount= $amount;
                 $wallet->save();
             

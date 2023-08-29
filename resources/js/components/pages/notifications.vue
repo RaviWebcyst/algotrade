@@ -10,7 +10,7 @@
                                     class="ri-arrow-left-line fs-2"></i></a>
                         </div>
                         <div class="col text-center">
-                            <div class="text-center text-white fw-medium">Level Commission</div>
+                            <div class="text-center text-white fw-medium">Notifications</div>
                         </div>
                         <div class="col-2"></div>
                     </div>
@@ -21,8 +21,9 @@
                                 <thead>
                                     <tr>
                                         <th class="bg-main">Sr.</th>
-                                        <th class="bg-main">Amount</th>
-                                        <th class="bg-main" style="min-width:150px;">Description</th>
+                                        <th class="bg-main">Symbol</th>
+                                        <th class="bg-main" style="min-width:150px;">Open Time</th>
+                                        <th class="bg-main" style="min-width:150px;">Close Time</th>
                                         <th class="bg-main" style="min-width:150px;">Date</th>
                                     </tr>
                                 </thead>
@@ -32,8 +33,9 @@
                                     >
                                         <tr v-for="(his, i) in history">
                                             <td class="p-3">{{ i + paginate.from }}</td>
-                                            <td class="p-3">${{ his.amount }}</td>
-                                            <td class="p-3">{{ his.description }}</td>
+                                            <td class="p-3">{{ his.symbol }}USDT</td>
+                                            <td class="p-3">{{ his.open_time }}</td>
+                                            <td class="p-3">{{ his.close_time }}</td>
                                             <td class="p-3">
                                                 {{
                                                     moment(
@@ -46,7 +48,7 @@
                                         </tr>
                                     </tbody>
                             </table>
-                            <pagination v-model="page" :records="records" @paginate="level_incomes" :per-page="per_page" />
+                            <pagination v-model="page" :records="records" @paginate="get_notifies" :per-page="per_page" />
 
                         </div>
                     </div>
@@ -66,7 +68,7 @@ import sidebar from './sidebar.vue';
 
 
 export default {
-  name: "level_income",
+  name: "notifications",
   components: {
       Pagination,
       Header,
@@ -83,15 +85,15 @@ export default {
       };
   },
   created() {
-      this.level_incomes();
+      this.get_notifies();
   },
 
   methods: {
       moment(date) {
           return moment(date);
       },
-      level_incomes(){
-          axios.post(this.url+"api/level_incomes?page="+this.page,{
+      get_notifies(){
+          axios.post(this.url+"api/notifications?page="+this.page,{
                   token:localStorage.token
           }).then(res=>{
               this.history = res.data.history.data;

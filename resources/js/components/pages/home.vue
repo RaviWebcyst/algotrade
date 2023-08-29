@@ -10,8 +10,17 @@
                                 <img src="https://source.unsplash.com/200x200/?random" alt=""
                                     class="rounded-pill w-100" />
                             </div>
-                            <div class="header-icon">
-                                <i class="ri-notification-line fs-4"></i>
+                            <div class="header-icon postion-relative" :class="notify>0?'bell_icon':''" >
+                                <router-link :to="{name:'notifications'}" class="">
+                                    <i class="ri-notification-line fs-4"></i>
+                                    <div class="position-relative cstm-badge" v-if="notify>0">
+                                    <div class="badge bg-warning rounded-circle">
+                                        <span class="text-white">
+                                            {{ notify }}
+                                        </span>
+                                    </div>
+                                </div>
+                                </router-link>
                             </div>
                         </div>
 
@@ -40,7 +49,165 @@
                             </router-link>
                         </div>
                     </div>
+<!--                 
+                    <section class="mt-4">
+                    <carousel
+                    :autoplay="true"
+                    :nav="false"
+                    :items="2"
+                    :margin="20"
+                    :dots="true"
+                >
+                    <div class="item">
+                        <router-link :to="{name:'trade',params:{id:'TRX'}}" class="text-white text-decoration-none">
+                                <div class="card nft-img overflow-hidden">
+                                    <div class="bg-body card-body p-2 text-center">
+                                        <div class="rounded-pill d-flex justify-content-center">
+                                            <img :src="url+'front/assets/images/tron.svg'" alt="" class="w-50">
+                                        </div>
+                                        <div class="fs-6 text-white mt-3 mb-2">Tron (TRX)</div>
+                                        <div class="row">
+                                            <div class="col-6 text-white text-start text-sm">{{ trx.price }}</div>
+                                            <div class="col-6 text-green text-sm text-end" :class="trx.per < 0 ? 'text-danger':'text-green'">{{trx.per}}%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </router-link>
+                                
+                    </div>
+                    <div class="item">
+                        <router-link :to="{name:'trade',params:{id:'BNB'}}" class="text-white text-decoration-none">
+                                <div class="card nft-img overflow-hidden">
+                                    <div class="bg-body card-body p-2 text-center">
+                                        <div class="rounded-pill d-flex justify-content-center">
+                                            <img :src="url+'front/assets/images/bnb.svg'" alt="" class="w-50">
+                                        </div>
+                                        <div class="fs-6 text-white mt-3 mb-2">Binance (BNB)</div>
+                                        <div class="row">
+                                            <div class="col-6 text-white text-start text-sm">{{ bnb.price }}</div>
+                                            <div class="col-6  text-sm text-end" :class="bnb.per < 0 ? 'text-danger':'text-green'">{{bnb.per}}%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </router-link>
+                                
+                    </div>
+                    <div class="item">
+                       
+                        <router-link :to="{name:'trade',params:{id:'BTC'}}" class="text-white text-decoration-none">
+                            <div class="card nft-img overflow-hidden">
+                                <div class="bg-body card-body p-2 text-center">
+                                    <div class="rounded-pill d-flex justify-content-center">
+                                        <img :src="url+'front/assets/images/bitcoin.svg'" alt="" class="w-50">
+                                    </div>
+                                    <div class="fs-6 text-white mt-3 mb-2">Bitcoin (BTC)</div>
+                                    <div class="row">
+                                        <div class="col-6 text-white text-start text-sm">{{ btc.price }}</div>
+                                        <div class="col-6  text-sm text-end"  :class="btc.per < 0 ? 'text-danger':'text-green'">{{btc.per}}%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </router-link>
+                                
+                    </div>
+                    <div class="item">
+                        <router-link :to="{name:'trade',params:{id:'DOGE'}}" class="text-white text-decoration-none">
+                            <div class="card nft-img overflow-hidden">
+                                <div class="bg-body card-body p-2 text-center">
+                                    <div class="rounded-pill d-flex justify-content-center">
+                                        <img :src="url+'front/assets/images/dogecoin.svg'" alt="" class="w-50">
+                                    </div>
+                                    <div class="fs-6 text-white mt-3 mb-2">Dogecoin (DOGE)</div>
+                                    <div class="row">
+                                        <div class="col-6 text-white text-start text-sm">{{ doge.price }}</div>
+                                        <div class="col-6  text-sm text-end" :class="doge.per < 0 ? 'text-danger':'text-green'">{{doge.per}}%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </router-link>
+                                
+                    </div>
+                    
+                </carousel>
+            </section> -->
 
+                    <div class="mx-sm-5 mx-2 my-4 text-white">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="fs-3 fw-medium">Market Trends</div>
+                            <div class="fs-6">
+                                <router-link :to="{name:'market'}" class="nav-link">
+                                View All
+                                </router-link>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mt-1 justify-content-center">
+                            <div class="col-6">
+                                <router-link :to="{name:'trade',params:{id:'TRX'}}" class="text-white text-decoration-none">
+                                <div class="card nft-img overflow-hidden">
+                                    <div class="bg-body card-body p-2 text-center">
+                                        <div class="rounded-pill">
+                                            <img :src="url+'front/assets/images/tron.svg'" alt="" class="w-50">
+                                        </div>
+                                        <div class="fs-6 text-white mt-3 mb-2">Tron (TRX)</div>
+                                        <div class="row">
+                                            <div class="col-6 text-white text-start text-sm">{{ trx.price }}</div>
+                                            <div class="col-6 text-green text-sm text-end" :class="trx.per < 0 ? 'text-danger':'text-green'">{{trx.per}}%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </router-link>
+                            </div>
+                            <div class="col-6">
+                                <router-link :to="{name:'trade',params:{id:'BNB'}}" class="text-white text-decoration-none">
+                                <div class="card nft-img overflow-hidden">
+                                    <div class="bg-body card-body p-2 text-center">
+                                        <div class="rounded-pill">
+                                            <img :src="url+'front/assets/images/bnb.svg'" alt="" class="w-50">
+                                        </div>
+                                        <div class="fs-6 text-white mt-3 mb-2">Binance (BNB)</div>
+                                        <div class="row">
+                                            <div class="col-6 text-white text-start text-sm">{{ bnb.price }}</div>
+                                            <div class="col-6  text-sm text-end" :class="bnb.per < 0 ? 'text-danger':'text-green'">{{bnb.per}}%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </router-link>
+                            </div>
+                            <div class="col-6">
+                                <router-link :to="{name:'trade',params:{id:'BTC'}}" class="text-white text-decoration-none">
+                                <div class="card nft-img overflow-hidden">
+                                    <div class="bg-body card-body p-2 text-center">
+                                        <div class="rounded-pill">
+                                            <img :src="url+'front/assets/images/bitcoin.svg'" alt="" class="w-50">
+                                        </div>
+                                        <div class="fs-6 text-white mt-3 mb-2">Bitcoin (BTC)</div>
+                                        <div class="row">
+                                            <div class="col-6 text-white text-start text-sm">{{ btc.price }}</div>
+                                            <div class="col-6  text-sm text-end"  :class="btc.per < 0 ? 'text-danger':'text-green'">{{btc.per}}%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </router-link>
+                            </div>
+                            <div class="col-6">
+                                <router-link :to="{name:'trade',params:{id:'DOGE'}}" class="text-white text-decoration-none">
+                                <div class="card nft-img overflow-hidden">
+                                    <div class="bg-body card-body p-2 text-center">
+                                        <div class="rounded-pill">
+                                            <img :src="url+'front/assets/images/dogecoin.svg'" alt="" class="w-50">
+                                        </div>
+                                        <div class="fs-6 text-white mt-3 mb-2">Dogecoin (DOGE)</div>
+                                        <div class="row">
+                                            <div class="col-6 text-white text-start text-sm">{{ doge.price }}</div>
+                                            <div class="col-6  text-sm text-end" :class="doge.per < 0 ? 'text-danger':'text-green'">{{doge.per}}%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </router-link>
+                            </div>
+                        </div>
+                    </div>
                     <div class="mx-sm-5 mx-2 my-4 text-white">
                         <div class="d-flex align-items-center justify-content-between">
                             <div class="fs-3 fw-medium">Records</div>
@@ -122,87 +289,9 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="mx-sm-5 mx-2 my-4 text-white">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="fs-3 fw-medium">Market Trends</div>
-                            <div class="fs-6">
-                                <router-link :to="{name:'market'}" class="nav-link">
-                                View All
-                                </router-link>
-                            </div>
-                        </div>
-
-                       
-
-
-                        <div class="row g-3 mt-1 justify-content-center">
-                            <div class="col-6">
-                                <router-link :to="{name:'trade',params:{id:'TRX'}}" class="text-white text-decoration-none">
-                                <div class="card nft-img overflow-hidden">
-                                    <div class="bg-body card-body p-2 text-center">
-                                        <div class="rounded-pill">
-                                            <img :src="url+'front/assets/images/tron.svg'" alt="" class="w-50">
-                                        </div>
-                                        <div class="fs-6 text-white mt-3 mb-2">Tron (TRX)</div>
-                                        <div class="row">
-                                            <div class="col-6 text-white text-start text-sm">{{ trx.price }}</div>
-                                            <div class="col-6 text-green text-sm text-end" :class="trx.per < 0 ? 'text-danger':'text-green'">{{trx.per}}%</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                </router-link>
-                            </div>
-                            <div class="col-6">
-                                <router-link :to="{name:'trade',params:{id:'BNB'}}" class="text-white text-decoration-none">
-                                <div class="card nft-img overflow-hidden">
-                                    <div class="bg-body card-body p-2 text-center">
-                                        <div class="rounded-pill">
-                                            <img :src="url+'front/assets/images/bnb.svg'" alt="" class="w-50">
-                                        </div>
-                                        <div class="fs-6 text-white mt-3 mb-2">Binance (BNB)</div>
-                                        <div class="row">
-                                            <div class="col-6 text-white text-start text-sm">{{ bnb.price }}</div>
-                                            <div class="col-6  text-sm text-end" :class="bnb.per < 0 ? 'text-danger':'text-green'">{{bnb.per}}%</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </router-link>
-                            </div>
-                            <div class="col-6">
-                                <router-link :to="{name:'trade',params:{id:'BTC'}}" class="text-white text-decoration-none">
-                                <div class="card nft-img overflow-hidden">
-                                    <div class="bg-body card-body p-2 text-center">
-                                        <div class="rounded-pill">
-                                            <img :src="url+'front/assets/images/bitcoin.svg'" alt="" class="w-50">
-                                        </div>
-                                        <div class="fs-6 text-white mt-3 mb-2">Bitcoin (BTC)</div>
-                                        <div class="row">
-                                            <div class="col-6 text-white text-start text-sm">{{ btc.price }}</div>
-                                            <div class="col-6  text-sm text-end"  :class="btc.per < 0 ? 'text-danger':'text-green'">{{btc.per}}%</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                </router-link>
-                            </div>
-                            <div class="col-6">
-                                <router-link :to="{name:'trade',params:{id:'DOGE'}}" class="text-white text-decoration-none">
-                                <div class="card nft-img overflow-hidden">
-                                    <div class="bg-body card-body p-2 text-center">
-                                        <div class="rounded-pill">
-                                            <img :src="url+'front/assets/images/dogecoin.svg'" alt="" class="w-50">
-                                        </div>
-                                        <div class="fs-6 text-white mt-3 mb-2">Dogecoin (DOGE)</div>
-                                        <div class="row">
-                                            <div class="col-6 text-white text-start text-sm">{{ doge.price }}</div>
-                                            <div class="col-6  text-sm text-end" :class="doge.per < 0 ? 'text-danger':'text-green'">{{doge.per}}%</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                </router-link>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- <section class="my-4">
+                            <coingecko-coin-list-widget  coin-ids="bitcoin,eos,ethereum,litecoin,ripple,matic-wormhole,dai" currency="usd" locale="en"></coingecko-coin-list-widget>
+                    </section> -->
                     <Footer />
                 </main>
             </div>
@@ -244,6 +333,7 @@ export default {
             direct_income:0,
             compound:0,
             payout:0,
+            notify:0,
             btc:{
                 price:0,
                 per:0
@@ -348,6 +438,7 @@ export default {
                     this.total_team = res.data.total_team;
                     this.compound = res.data.compound_income;
                     this.link = this.url + "Register?uid=" + res.data.user.uid;
+                    this.notify = res.data.notifies;
                 })
                 .catch((err) => {
                     console.log(err.response.data.message);

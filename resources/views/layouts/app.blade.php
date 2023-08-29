@@ -140,11 +140,17 @@
                 </a>
               </li>
               <li class="nav-item">
+                <a href="{{route('admin.compound_incomes')}}" class="nav-link {{ request()->is('admin/compound_incomes') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Compound Incomes</p>
+                </a>
+              </li>
+              {{-- <li class="nav-item">
                 <a href="{{route('admin.daily_incomes')}}" class="nav-link {{ request()->is('admin/daily_incomes') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Daily Incomes</p>
                 </a>
-              </li>
+              </li> --}}
               <li class="nav-item">
                 <a href="{{route('admin.transactions')}}" class="nav-link {{ request()->is('admin/transactions') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
@@ -168,6 +174,22 @@
               <i class="nav-icon fas fa-newspaper"></i>
               <p>
                 Latest News
+              </p>
+            </a>
+          </li>
+          <li class="nav-item ">
+            <a href="{{route('admin.assets')}}" class="nav-link {{ request()->is('admin/assets') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-plus-square" aria-hidden="true"></i>
+              <p>
+                Daily Asset
+              </p>
+            </a>
+          </li>
+          <li class="nav-item ">
+            <a href="{{route('admin.trade_setting')}}" class="nav-link {{ request()->is('admin/trade_setting') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-cog" aria-hidden="true"></i>
+              <p>
+                Trade Setting
               </p>
             </a>
           </li>
