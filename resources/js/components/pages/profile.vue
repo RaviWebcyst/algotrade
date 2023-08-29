@@ -75,6 +75,13 @@
                             </div>
                             
                         </router-link>
+                        <router-link :to="{name:'trades'}" class="list-group-item bg-body text-white py-3 list-group-item-action">
+                            <div class="row">
+                                <div class="col-10">Trades</div>
+                                <div class="col text-right"><i class="ri-arrow-right-s-line"></i></div>
+                            </div>
+                            
+                        </router-link>
                         <router-link :to="{name:'invest_history'}" class="list-group-item bg-body text-white py-3 list-group-item-action">
                             <div class="row">
                                 <div class="col-10">Invest History</div>

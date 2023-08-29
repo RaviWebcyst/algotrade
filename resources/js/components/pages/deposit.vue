@@ -28,7 +28,6 @@
                             <div class="d-grid mt-3">
                                 <button class="btn btn-main p-2" type="submit" :disabled="disable">Deposit
                                     <div class="spinner-grow spinner-grow-sm text-secondary" role="status" v-if="disable">
-                                    <span class="sr-only">Loading...</span>
                                     </div>
                                 </button>
                             </div>

@@ -24,7 +24,6 @@
                                 <label>Symbol</label>
                                 <select name="symbol" id="" class="form-control">
                                     <option value="" disabled selected>Select Symbol</option>
-                                    <option value="BTC" >BTC</option>
                                     <option value="XMR" >XMR</option>
                                     <option value="IMX" >IMX</option>
                                     <option value="ETH" >ETH</option>

@@ -16,6 +16,13 @@
                             <router-link :to="{name:'wallet_history'}" class="text-decoration-none text-white text-truncate">History</router-link>
                         </div>
                     </div>
+                    <div class="d-flex justify-content-center  my-3">
+                            <small class="text-main"
+                                >Balance : ${{
+                                    balance
+                                }}</small
+                            >
+                        </div>
 
                     <form class="form-wrapper w-90 p-3 mt-5 mx-auto rounded-4" @submit.prevent="withdraw">
                         <div class="fs-2 text-center text-white">Withdraw</div>
@@ -143,20 +150,23 @@ export default {
         };
     },
     created() {
-        this.userDetails();
+        this.wallet_balance();
     },
 
     methods: {
-        userDetails() {
+        wallet_balance(){
             axios
-                .post(this.url + "api/getUserDetails", {
-                    token: localStorage.token,
+                .post(this.url + "api/getBalance",{
+                    wallet_type:"payout",
+                    token:localStorage.token,
                 })
                 .then((res) => {
-                    this.balance = Number(res.data.balance).toFixed(3);
+                    this.balance= res.data;
                 })
                 .catch((err) => {
-                    console.log(err);
+                    var message = err.response.data.message;
+                    console.log(message);
+                    // this.$toaster.error(message);
                 });
         },
         withdraw() {

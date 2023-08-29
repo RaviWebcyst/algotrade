@@ -349,7 +349,8 @@ public function recentChat(Request $request){
         $balance = $this->getBalance($user->id,"usdt");
         $trade_balance = $this->getBalance($user->id,"trade");
 
-        $usdt = pack_active::where("expire",0)->where("user_id",$user->id)->sum('amount');
+        
+       
 
 
         // $balance = round($total_balance - $user->package_amount,2);
@@ -378,7 +379,9 @@ public function recentChat(Request $request){
         $team_business = downline::where("tagsp",$user->uid)->sum('business');
 
         $notifies = daily_asset::where("expire",0)->count();
-       
+
+        $pack_amount = pack_active::where("expire",0)->where("user_id",$user->id)->sum('amount');
+        $usdt  = $compound_income + $pack_amount;
 
         $kyc = kyc::where("user_id",$user->id)->select("status",'user_id')->latest()->first();
 
@@ -847,17 +850,46 @@ public function recentChat(Request $request){
 
     public function team_list(Request $request){
         $user = JWTAuth::parseToken()->authenticate();
-        $teams = downline::where("tagsp",$user->uid)->when($request->level && $request->level != "",function($q) use($request){
-            $q->where("level",$request->level);
-        })->orderBy("level")->paginate(50);
-        $teams->map(function($data){
+        // $teams = downline::where("tagsp",$user->uid)->when($request->level && $request->level != "",function($q) use($request){
+        //     $q->where("level",$request->level);
+        // })->orderBy("level")->paginate(50);
+        $teams1 = downline::where("tagsp",$user->uid)->where("level",1)->get();
+        $teams1->map(function($data){
+            $user = User::where("uid",$data->user_id)->select("name","uid","package_amount")->first();
+            $data->name = $user->name;
+            $data->package_amount = $user->package_amount;
+            return $data;
+        });
+        $teams2 = downline::where("tagsp",$user->uid)->where("level",3)->get();
+        $teams2->map(function($data){
+            $user = User::where("uid",$data->user_id)->select("name","uid","package_amount")->first();
+            $data->name = $user->name;
+            $data->package_amount = $user->package_amount;
+            return $data;
+        });
+        $teams3 = downline::where("tagsp",$user->uid)->where("level",3)->get();
+        $teams3->map(function($data){
+            $user = User::where("uid",$data->user_id)->select("name","uid","package_amount")->first();
+            $data->name = $user->name;
+            $data->package_amount = $user->package_amount;
+            return $data;
+        });
+        $teams4 = downline::where("tagsp",$user->uid)->where("level",4)->get();
+        $teams4->map(function($data){
+            $user = User::where("uid",$data->user_id)->select("name","uid","package_amount")->first();
+            $data->name = $user->name;
+            $data->package_amount = $user->package_amount;
+            return $data;
+        });
+        $teams5 = downline::where("tagsp",$user->uid)->where("level",5)->get();
+        $teams5->map(function($data){
             $user = User::where("uid",$data->user_id)->select("name","uid","package_amount")->first();
             $data->name = $user->name;
             $data->package_amount = $user->package_amount;
             return $data;
         });
 
-        return response()->json(compact('teams'));
+        return response()->json(compact('teams1','teams2','teams3','teams4','teams5'));
     }
 
 
@@ -1106,15 +1138,15 @@ public function recentChat(Request $request){
             exit;
         }
         
-        $deduction  = 0.2 * $request->amount;
-        $net_amount = $request->amount - $deduction;
+        // $deduction  = 0.2 * $request->amount;
+        // $net_amount = $request->amount - $deduction;
 
         $wallet = new wallet();
         $wallet->user_id = $user->uid;
         $wallet->userId = $user->id;
         $wallet->amount = $request->amount;
-        $wallet->net_amount = $net_amount;
-        $wallet->deduction = $deduction;
+        $wallet->net_amount = $request->amount;
+        // $wallet->deduction = $deduction;
         $wallet->transaction_type = "swap_payout";
         $wallet->wallet_type = $request->wallet_type;
         $wallet->type="debit";
@@ -1124,7 +1156,7 @@ public function recentChat(Request $request){
         $wallet = new wallet();
         $wallet->user_id = $user->uid;
         $wallet->userId = $user->id;
-        $wallet->amount = $net_amount;
+        $wallet->amount = $request->amount;
         $wallet->transaction_type = "swap_payout";
         $wallet->wallet_type = "payout";
         $wallet->type="credit";
@@ -1258,6 +1290,12 @@ public function recentChat(Request $request){
         return view('admin.add_upi',compact('upi'));
     }
 
+    public function user_trades(){
+        $records = trade::latest()->paginate(50);
+        return view('admin.trades',compact('records'));
+    }
+    
+
     public function store_upi(Request $request){
         $request->validate([
             "bar_code"=>'required',
@@ -1289,10 +1327,6 @@ public function recentChat(Request $request){
 
     }
 
-    public function getUpi(Request $request){
-        $upi = upi::orderBy("id","desc")->first();
-        return response()->json(compact('upi'));
-    }
 
     public function queries() {
         $supports = support::where("status", "pending")->get();
@@ -1324,6 +1358,8 @@ public function recentChat(Request $request){
         return view('admin.chat', compact('id', 'chats'));
     }
 
+
+
     public function sendMessage(Request $request, $id) {
 
         $support = support::where('id', $id)->first();
@@ -1337,6 +1373,17 @@ public function recentChat(Request $request){
         $chat->save();
         return redirect()->back()->with("success", "Message Sent Successfully");
     }
+
+
+
+
+    public function getUpi(Request $request){
+        $upi = upi::orderBy("id","desc")->first();
+        return response()->json(compact('upi'));
+    }
+
+   
+
 
     public function user(Request $request){
         $validator = Validator::make($request->all(), [
@@ -1693,7 +1740,7 @@ public function recentChat(Request $request){
 
     public function income_history(Request $request){
         $user = JWTAuth::parseToken()->authenticate();
-        $history = wallet::where("userId",$user->id)->where("transaction_type","stack_profit")->orderBy("id","desc")->paginate(50);
+        $history = wallet::where("userId",$user->id)->where("transaction_type","compound_income")->orderBy("id","desc")->paginate(50);
         return response()->json(compact('history'));
     }
     public function level_incomes(Request $request){
@@ -1711,8 +1758,10 @@ public function recentChat(Request $request){
         $price = top_coin::latest()->limit(5)->get();
         return response()->json($price);
     }
-    public function trades(){
-        $history = top_coin::latest()->paginate(50);
+    public function trades(Request $request){
+        // $history = top_coin::latest()->paginate(50);
+        $user = JWTAuth::parseToken()->authenticate();
+        $history = trade::where("user_id",$user->id)->orderBy("id","desc")->paginate(50);
         return response()->json(compact('history'));
     }
 
@@ -1868,7 +1917,7 @@ public function recentChat(Request $request){
                 "cancel_url": "https://websyst.in/demo/algotrade/home"
                 } ',
                 CURLOPT_HTTPHEADER => array(
-                    "x-api-key: ZPDQK5X-CXF48HV-MYR2J40-WPHFKVN",
+                    "x-api-key: P33SFKZ-7XWMYZB-N26955Q-0XA1CGR",
                     "Content-Type: application/json"
                 ),
                 ));
@@ -2020,7 +2069,16 @@ public function recentChat(Request $request){
 
 
 
+
+
         $user = JWTAuth::parseToken()->authenticate();
+
+        //check dupicate buy
+        $trade_exist = trade::where("user_id",$user->id)->where("type","buy")->whereDate("created_at",Carbon::today())->count();
+        if($trade_exist > 0 ){
+            return response()->json(['message'=>"You can trade once in a day"],500);
+            exit;  
+        }
 
         $time = date('H:i');
 
@@ -2031,12 +2089,16 @@ public function recentChat(Request $request){
             exit;
         }
 
-        if($trade_time != null && $trade_time->symbol != $request->symbol){
+        
+
+        if($trade_time != null && $trade_time->symbol != $request->coin){
             return response()->json(['message'=>"Please choose valid trade symbol"],500);
             exit;
         }
 
-        $usdt = pack_active::where("expire",0)->where("user_id",$user->id)->sum('amount');
+        $compound_income = wallet::where("userId",$user->id)->where("transaction_type","compound_income")->sum('amount');
+        $pack_amount = pack_active::where("expire",0)->where("user_id",$user->id)->sum('amount');
+        $usdt = $compound_income + $pack_amount;
 
         if($request->amount == 0){
             return response()->json(["message"=>"Amount should be greater than zero"],500);
@@ -2054,14 +2116,18 @@ public function recentChat(Request $request){
             exit;
         }
 
+        $amount = $usdt * ($trade->amount/100);
+        // $amount = $request->amount;
+        // if($amount > $trade->amount){
+        //     $amount = $trade->amount/100;
+        // }
 
-
-        $recieve  = $request->amount / $request->price;
+        $recieve  = $amount / $request->price;
 
         $trade = new trade();
         $trade->symbol = $request->symbol;
         $trade->price = $request->price;
-        $trade->quantity = $request->amount;
+        $trade->quantity = $amount;
         $trade->recieve = $recieve;
         $trade->user_id = $user->id;
         $trade->type = "buy";
@@ -2070,7 +2136,7 @@ public function recentChat(Request $request){
         $wallet = new wallet();
         $wallet->user_id = $user->uid;
         $wallet->userId = $user->id;
-        $wallet->amount = $request->amount;
+        $wallet->amount = $amount;
         $wallet->from ="buy";
         $wallet->transaction_type = "buy";
         $wallet->wallet_type = "usdt";

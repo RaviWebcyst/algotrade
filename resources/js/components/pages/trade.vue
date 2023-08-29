@@ -21,7 +21,26 @@
                         </div>
                     </div>
                     <div class="mx-sm-4 mx-2 my-4 text-white">
-                        <div id="chart"></div>
+                        <!-- <div id="chart"></div> -->
+                        <iframe
+                        id="tradingview_319a7"
+                        :src="
+                            'https://s.tradingview.com/widgetembed/?frameElementId=tradingview_319a7&amp;symbol=' +
+                            coin +
+                            'USDT&amp;interval=D&amp;hidesidetoolbar=0&theme=dark&amp;symboledit=1&amp;saveimage=1&amp;toolbarbg=f1f3f6&amp;details=1&amp;calendar=1&amp;hotlist=1&amp;studies=%5B%5D&amp;style=1&amp;timezone=Etc%2FUTC&amp;withdateranges=1&amp;studies_overrides=%7B%7D&amp;overrides=%7B%7D&amp;enabled_features=%5B%5D&amp;disabled_features=%5B%5D&amp;locale=in&amp;utm_source=&amp;utm_medium=widget&amp;utm_campaign=chart&amp;utm_term=BITSTAMP%3ABTCUSD#%7B%22page-uri%22%3A%22__NHTTP__%22%7D'
+                        "
+                        style="
+                            width: 100%;
+                            height: 100%;
+                            margin: 0 !important;
+                            padding: 0 !important;
+                        "
+                        frameborder="0"
+                        allowtransparency="true"
+                        scrolling="no"
+                        allowfullscreen=""
+                    >
+                                                    </iframe>
                     </div>
                     <div class="text-white">
                         <div class="row align-items-center justify-content-center mx-3">
@@ -140,8 +159,8 @@ export default {
       };
   },
   created() {
-    this.coin = this.$route.params.id;
-    this.userDetails();
+      this.userDetails();
+      this.coin = this.$route.params.id;
   },
   methods: {
       moment(date) {

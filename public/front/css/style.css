@@ -144,3 +144,8 @@ footer.footer.tabs {
 .VuePagination {
     color: white !important;
 }
+
+.bg-cstm1{
+    background-image: linear-gradient(to bottom, #2A1101, #413511);
+    color: white;
+}

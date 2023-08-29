@@ -27,7 +27,7 @@
                       <tr>
                         <th >#</th>
                         <th>Symbol</th>
-                        <th>Use Balance</th>
+                        <th>Use Balance(%)</th>
                         <th>Profit</th>
                         <th>Action</th>
                       </tr>

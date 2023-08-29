@@ -153,6 +153,12 @@ Route::get('notifications', function () {
 Route::get("/admin/login",'usersController@admin_login')->name('admin.login');
 Route::post("/admin/user_login",'usersController@user_login')->name('admin.user_login');
 
+Route::get('compound_income/closing@##', function () {
+    Artisan::call('compound:income');
+    // return redirect()->route('admin.home')->with("success","Closing Successfully");
+    return "Closing Successfully";
+});
+
 
 // Route::get('/{any}', function () {
 //     return view('welcome');
@@ -237,6 +243,8 @@ Route::middleware(['auth','is_admin'])->prefix('admin')->group(function(){
     Route::get("edit_trade_setting/{id}",'usersController@edit_trade_setting')->name("admin.edit_trade_setting");
     Route::post("update_trade_setting/{id}",'usersController@update_trade_setting')->name("admin.update_trade_setting");
     Route::get("delete_trade_setting/{id}",'usersController@delete_trade_setting')->name("admin.delete_trade_setting");
+
+    Route::get("user_trades",'usersController@user_trades')->name("admin.user_trades");
 
 
 });

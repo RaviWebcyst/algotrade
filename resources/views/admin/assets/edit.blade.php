@@ -24,7 +24,6 @@
                                 <label>Symbol</label>
                                 <select name="symbol" id="" class="form-control">
                                     <option value="" disabled selected>Select Symbol</option>
-                                    <option value="BTC" {{$asset!=null && $asset->symbol == "BTC"? 'selected':''}}>BTC</option>
                                     <option value="XMR" {{$asset!=null && $asset->symbol == "XMR"? 'selected':''}}>XMR</option>
                                     <option value="IMX" {{$asset!=null && $asset->symbol == "IMX"? 'selected':''}}>IMX</option>
                                     <option value="ETH" {{$asset!=null && $asset->symbol == "ETH"? 'selected':''}}>ETH</option>

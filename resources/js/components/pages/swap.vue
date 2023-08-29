@@ -17,7 +17,13 @@
                             <router-link :to="{name:'payout_swaps'}" class="text-decoration-none text-white text-truncate">History</router-link>
                         </div>
                     </div>
-
+                    <div class="d-flex justify-content-center  my-3" :class="form.type== null">
+                            <small class="text-main"
+                                >Balance : ${{
+                                    balance
+                                }}</small
+                            >
+                    </div>
                     <form class="form-wrapper w-90 p-3 mt-5 mx-auto rounded-4" @submit.prevent="swap">
                         <div class="fs-2 text-center text-white">Swap</div>
                         <div class="mt-3">

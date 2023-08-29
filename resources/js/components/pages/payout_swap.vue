@@ -17,12 +17,19 @@
                         </div>
                     </div>
 
+                    <div class="d-flex justify-content-center  my-3" v-if="form.type != ''">
+                            <small class="text-main"
+                                >Balance : ${{
+                                    balance
+                                }}</small
+                            >
+                    </div>
                     <form class="form-wrapper w-90 p-3 mt-5 mx-auto rounded-4" @submit.prevent="swap">
                         <div class="fs-2 text-center text-white">Swap</div>
                         <div class="mt-3">
                             <div class="form-floating mb-3">
                                 <select class="form-select rounded-3" id="floatingSelect"
-                                    aria-label="Floating label select example" v-model="form.type"  required>
+                                    aria-label="Floating label select example" v-model="form.type"  @change="wallet_balance" required>
                                     <option value="" disabled selected>Choose Wallet</option>
                                     <option value="usd">Profit</option>
                                     <option value="compound">Compound</option>
@@ -142,6 +149,7 @@ export default {
                 password: "",
                 type:""
             },
+            disable:false
         };
     },
     created() {
@@ -186,11 +194,10 @@ export default {
         wallet_balance(){
             axios
                 .post(this.url + "api/getBalance",{
-                    wallet_type:this.form.wallet_type,
+                    wallet_type:this.form.type,
                     token:localStorage.token,
                 })
                 .then((res) => {
-                    console.log(res);
                     this.balance= res.data;
                 })
                 .catch((err) => {

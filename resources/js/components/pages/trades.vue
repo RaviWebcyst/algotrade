@@ -1,5 +1,61 @@
 <template>
-    <div class="container head_container">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4 p-0">
+                <main class="flex-shrink-0 main-content">
+                    <div class="header-main row align-items-center p-4 sticky-top m-0">
+                        <div class="col-2">
+                            <a href="#" class="text-decoration-none text-white" @click="$router.go(-1)"><i
+                                    class="ri-arrow-left-line fs-2"></i></a>
+                        </div>
+                        <div class="col text-center">
+                            <div class="text-center text-white fw-medium">Trades</div>
+                        </div>
+                        <div class="col-2"></div>
+                    </div>
+                    <div class="mx-3 mt-3">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover">
+                                <thead>
+                            <tr>
+                                <th class="bg-main">Symbol</th>
+                                <th class="bg-main">Type</th>
+                                <th class="bg-main">Price</th>
+                                <th class="bg-main" >Qty</th>
+                                <th class="bg-main" style="min-width: 150px">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody v-if="history.length > 0">
+                            <tr v-for="his in history">
+                                <td class="p-3">{{ his.symbol }}</td>
+                                <td class="p-3">
+                                    {{ his.type }} 
+                                </td>
+                                <td class="p-3">{{ his.price }}</td>
+                                <td class="p-3">
+                                    {{ his.quantity }}
+                                </td>
+                                <td class="p-3">
+                                    {{
+                                        moment(his.created_at).format(
+                                            "DD-MM-YYYY, hh:mm:ss A"
+                                        )
+                                    }}
+                                </td>
+                            </tr>
+                        </tbody>
+                            </table>
+                            <pagination v-model="page" :records="records" @paginate="trades" :per-page="per_page" />
+
+                        </div>
+                    </div>
+                </main>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+    </div>
+    <!-- <div class="container head_container">
         <Header />
         <section class="mt-cstm">
             <div class="col-md-10 mx-auto pt-5 px-2">
@@ -11,29 +67,25 @@
                         <thead>
                             <tr>
                                 <th>Symbol</th>
-                                <th style="min-width: 115px">PNL(%)</th>
+                                <th style="min-width: 115px">Type</th>
                                 <th>Price</th>
-                                <th style="min-width: 130px">Open Time</th>
-                                <th style="min-width: 130px">Close Time</th>
+                                <th style="min-width: 130px">Qty</th>
+                                <th style="min-width: 130px">Date</th>
                             </tr>
                         </thead>
                         <tbody v-if="history.length > 0">
-                            <tr v-for="pricee in history">
-                                <td>{{ pricee.symbol }}</td>
+                            <tr v-for="his in history">
+                                <td>{{ his.symbol }}</td>
                                 <td class="text-success">
-                                    +{{ pricee.percentage.toFixed(5) }} %
+                                    {{ his.type }} 
                                 </td>
-                                <td>{{ pricee.price }}</td>
+                                <td>{{ his.price }}</td>
                                 <td>
-                                    {{
-                                        moment(pricee.open_time).format(
-                                            "DD-MM-YYYY, hh:mm:ss A"
-                                        )
-                                    }}
+                                    {{ his.quantity }}
                                 </td>
                                 <td>
                                     {{
-                                        moment(pricee.created_at).format(
+                                        moment(his.created_at).format(
                                             "DD-MM-YYYY, hh:mm:ss A"
                                         )
                                     }}
@@ -51,7 +103,7 @@
                 </div>
             </div>
         </section>
-    </div>
+    </div> -->
 </template>
 
 <script>

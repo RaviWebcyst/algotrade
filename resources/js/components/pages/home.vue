@@ -289,6 +289,52 @@
                             </div>
                         </div>
                     </div>
+
+                    <section class="content content2 mt-5">
+                    <div class="container-fluid">
+                    <div class="row mt-5">
+                        <div class="col-12">
+                            <div class="card bg-dark">
+                                <div class="card-header bg-dark">
+                                    <h3 class="card-title text-white">
+                                        Your Refferal Link
+                                    </h3>
+                                </div>
+
+                                <div class="card-body table-responsive p-3">
+                                    <table
+                                        class="table text-nowrap table-borderless bg-dark"
+                                    >
+                                        <tbody>
+                                            <tr>
+                                                <td class="bg-dark">
+                                                    <div class="border rounded p-2 border-main text-white">
+                                                    {{ link }}
+                                                    </div>
+                                                </td>
+                                                </tr>
+                                                <tr>
+                                                <td class="bg-dark">
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-main btn-md"
+                                                        v-clipboard="value"
+                                                    >
+                                                        <i
+                                                            class="fas fa-share-square"
+                                                        ></i>
+                                                        Copy Link
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
                     <!-- <section class="my-4">
                             <coingecko-coin-list-widget  coin-ids="bitcoin,eos,ethereum,litecoin,ripple,matic-wormhole,dai" currency="usd" locale="en"></coingecko-coin-list-widget>
                     </section> -->
@@ -385,7 +431,7 @@ export default {
             return moment(date);
         },
         value() {
-            this.$toaster.info("Link Copied!");
+            this.$toaster.warning("Link Copied!");
             return this.link;
         },
         packages(){

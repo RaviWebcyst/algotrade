@@ -145,6 +145,12 @@
                   <p>Compound Incomes</p>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="{{route('admin.user_trades')}}" class="nav-link {{ request()->is('admin/user_trades') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>User Trades</p>
+                </a>
+              </li>
               {{-- <li class="nav-item">
                 <a href="{{route('admin.daily_incomes')}}" class="nav-link {{ request()->is('admin/daily_incomes') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>

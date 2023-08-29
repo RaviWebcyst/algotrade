@@ -24,7 +24,6 @@
                                 <label>Symbol</label>
                                 <select name="symbol" id="" class="form-control">
                                     <option value="" disabled selected>Select Symbol</option>
-                                    <option value="BTC" >BTC</option>
                                     <option value="XMR" >XMR</option>
                                     <option value="IMX" >IMX</option>
                                     <option value="ETH" >ETH</option>
@@ -50,7 +49,7 @@
                                 </select>
                               </div>
                               <div class="form-group">
-                                <label>Usable Amount</label>
+                                <label>Usable Amount(%)</label>
                                 <input type="text" class="form-control" placeholder="Enter usable amount" name="amount" required>
                               </div>
                               <div class="form-group">
